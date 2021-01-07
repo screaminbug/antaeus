@@ -5,6 +5,7 @@
 
 package io.pleo.antaeus.data
 
+import org.jetbrains.exposed.sql.CurrentDateTime
 import org.jetbrains.exposed.sql.Table
 
 object InvoiceTable : Table() {
@@ -18,4 +19,14 @@ object InvoiceTable : Table() {
 object CustomerTable : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val currency = varchar("currency", 3)
+}
+
+object BillingTable : Table() {
+    val id = integer("id").autoIncrement().primaryKey()
+    val customerId = reference("customer_id", CustomerTable.id)
+    val invoiceId = reference("invoice_id", InvoiceTable.id)
+    val currency = varchar("currency", 3)
+    val amount = decimal("value", 1000, 2)
+    val billingStatus = text("status")
+    val chargeAttempTimestamp = datetime("charge_attempt").defaultExpression(CurrentDateTime())
 }

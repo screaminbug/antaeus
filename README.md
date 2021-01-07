@@ -14,6 +14,35 @@ Fork this repo with your solution. Ideally, we'd like to see your progression th
 
 Please let us know how long the challenge takes you. We're not looking for how speedy or lengthy you are. It's just really to give us a clearer idea of what you've produced in the time you decided to take. Feel free to go as big or as small as you want.
 
+## Brainstorming
+
+#Currency
+Each Customer has his/her own currency, which is probably the currency of their bank account, and payment processor may or may
+not accept charging in foreign currency. With that and Since there is no constraint that invoice currency must match the customer currency,
+a currency conversion provider must be made available to the billing service for currency conversion purposes before sending
+it to the Payment Provider.
+
+#Scheduling
+Since requirement is to charge invoices on the first of the month, a some kind of scheduler will be needed.
+A scheduled task will need to get all PENDING invoices and then call the Billing Service method pay with them.
+
+#Possible pitfalls
+Double charging. System must be made aware that invoice is being changed to prevent charging the customers multiple times.
+This could happen if, for example, payment will be spread out over the course of day the day and is processed by multiple schedulers
+
+Proposed solution. Add a new status of the invoice, for example PROCESSING which will prevent that from happening, since
+only the PENDING statuses will be considered for sending to the billing service.
+
+#Failure in billing service
+A care needs to be taken so that charged invoices are marked as paid. If something goes wrong in the billing service
+after the invoice has been successfully charged, there is a potential for invoices to get stuck in PROCESSING status.
+Possible mitigations
+1. If Billing record was succesfully persisted
+
+
+
+PaymentProvider
+
 ## Developing
 
 Requirements:
