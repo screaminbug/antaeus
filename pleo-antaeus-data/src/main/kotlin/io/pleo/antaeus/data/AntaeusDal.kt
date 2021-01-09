@@ -79,7 +79,6 @@ class AntaeusDal(private val db: Database) {
 
 
     fun updateInvoices(invoiceIds: List<Int>, paid: InvoiceStatus) {
-        TODO("Not yet implemented")
     }
 
     fun fetchCustomer(id: Int): Customer? {
