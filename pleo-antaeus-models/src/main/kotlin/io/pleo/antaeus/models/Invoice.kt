@@ -4,5 +4,5 @@ data class Invoice(
     val id: Int,
     val customerId: Int,
     val amount: Money,
-    var status: InvoiceStatus
+    val status: InvoiceStatus
 )

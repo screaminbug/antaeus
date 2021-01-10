@@ -2,6 +2,7 @@ package io.pleo.antaeus.core.util
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.time.DateTimeException
 import java.time.YearMonth
@@ -92,7 +93,7 @@ internal class DateUtilKtTest {
 
     @Test
     fun `given invalid month 0, should throw DateTimeException`() {
-        Assertions.assertThrows(DateTimeException::class.java, {
+        assertThrows(DateTimeException::class.java, {
             assertCorrectDateSet(
                 currentYear = 2001,
                 currentMonth = 0,
@@ -108,7 +109,7 @@ internal class DateUtilKtTest {
 
     @Test
     fun `given invalid month 13, should throw DateTimeException`() {
-        Assertions.assertThrows(DateTimeException::class.java, {
+        assertThrows(DateTimeException::class.java, {
             assertCorrectDateSet(
                 currentYear = 2001,
                 currentMonth = 13,
@@ -124,7 +125,7 @@ internal class DateUtilKtTest {
 
     @Test
     fun `given invalid date in month, should throw DateTimeException`() {
-        Assertions.assertThrows(DateTimeException::class.java, {
+        assertThrows(DateTimeException::class.java, {
             assertCorrectDateSet(
                 currentYear = 2001,
                 currentMonth = 2,

@@ -34,15 +34,17 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    fun fetchInvoicesForProcessing(): List<Invoice> {
+    fun fetchInvoicesForProcessing(limit: Int? = null): List<Invoice> {
         return transaction(db) {
 
+            InvoiceTable.update({InvoiceTable.status.eq(InvoiceStatus.PENDING.name)}, limit) {
+                it[this.status] = InvoiceStatus.PROCESSING.toString()
+            }
+
             InvoiceTable
-                .select(where = InvoiceTable.status.eq(InvoiceStatus.PROCESSING.name))
+                .select(InvoiceTable.status.eq(InvoiceStatus.PROCESSING.name))
                 .map {
-                    val invoice = it.toInvoice()
-                    invoice.status = InvoiceStatus.PROCESSING
-                    invoice
+                    it.toInvoice()
                 }
 
         }
@@ -78,7 +80,13 @@ class AntaeusDal(private val db: Database) {
     }
 
 
-    fun updateInvoices(invoiceIds: List<Int>, paid: InvoiceStatus) {
+    fun updateInvoices(invoiceIds: List<Int>, invoiceStatus: InvoiceStatus) {
+        return transaction(db) {
+            InvoiceTable
+                .update({ InvoiceTable.id.inList(invoiceIds) }) {
+                    it[this.status] = invoiceStatus.toString()
+                }
+        }
     }
 
     fun fetchCustomer(id: Int): Customer? {
