@@ -1,6 +1,6 @@
 package io.pleo.antaeus.models
 
-data class Billing (
+data class BillingLog (
     val id: Int,
     val customerId: Int,
     val invoiceId: Int,

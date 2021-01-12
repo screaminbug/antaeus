@@ -4,14 +4,13 @@ import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
 import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
 import io.pleo.antaeus.core.exceptions.NetworkException
 import io.pleo.antaeus.core.external.PaymentProvider
-import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.models.BillingStatus
 import io.pleo.antaeus.models.Invoice
 
 class BillingService(
     private val paymentProvider: PaymentProvider,
     private val conversionService: CurrencyConversionService,
-    private val dal: AntaeusDal
+    private val billingLogService: BillingLogService
 ) {
     /**
      * Process pending invoices
@@ -30,39 +29,32 @@ class BillingService(
                 val isSuccessful = paymentProvider.charge(invoiceWithConvertedCurrency)
 
                 if (isSuccessful) {
-                    recordBilling(it, BillingStatus.ACCEPTED)
+                    billingLogService.recordBilling(it, BillingStatus.ACCEPTED)
                     paid.add(it.id)
                 } else {
-                    recordBilling(it, BillingStatus.DECLINED)
+                    billingLogService.recordBilling(it, BillingStatus.DECLINED)
                 }
 
                 val status =
                     if (isSuccessful) BillingStatus.ACCEPTED
                     else BillingStatus.DECLINED
 
-                recordBilling(it, status)
+                billingLogService.recordBilling(it, status)
             } catch (e: CustomerNotFoundException) {
-                recordBilling(it, BillingStatus.UNKNOWN_USER)
+                billingLogService.recordBilling(it, BillingStatus.UNKNOWN_USER)
             } catch (e: CurrencyMismatchException) {
-                recordBilling(it, BillingStatus.UNSUPPORTED_CURRENCY)
+                billingLogService.recordBilling(it, BillingStatus.UNSUPPORTED_CURRENCY)
             } catch (e: NetworkException) {
-                recordBilling(it, BillingStatus.COMMUNICATION_PROBLEM)
+                billingLogService.recordBilling(it, BillingStatus.COMMUNICATION_PROBLEM)
             } catch (e: Throwable) {
-                recordBilling(it, BillingStatus.GENERAL_FAILURE)
+                billingLogService.recordBilling(it, BillingStatus.GENERAL_FAILURE)
             }
         }
 
         return paid
     }
 
-    private fun recordBilling(invoice: Invoice, status: BillingStatus) {
-        dal.createBilling(
-            customerId = invoice.customerId,
-            invoiceId = invoice.id,
-            chargedAmount = invoice.amount,
-            billingStatus = status
-        )
-    }
+
 
 }
 

@@ -9,12 +9,10 @@ package io.pleo.antaeus.app
 
 import getCurrencyProvider
 import getPaymentProvider
-import io.pleo.antaeus.core.scheduled.BillingMonthlyScheduler
-import io.pleo.antaeus.core.scheduled.ScheduleProvider
-import io.pleo.antaeus.core.services.BillingService
-import io.pleo.antaeus.core.services.CurrencyConversionService
-import io.pleo.antaeus.core.services.CustomerService
-import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.job.BillingJob
+import io.pleo.antaeus.core.scheduled.MonthlyScheduler
+import io.pleo.antaeus.core.scheduled.MonthlyScheduleProvider
+import io.pleo.antaeus.core.services.*
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
@@ -64,22 +62,31 @@ fun main() {
     // Create core services
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
+    val currencyConversionService = CurrencyConversionService(customerService, currencyProvider)
+
 
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(
         paymentProvider = paymentProvider,
-        conversionService = CurrencyConversionService(customerService, currencyProvider),
-        dal = dal
+        conversionService = currencyConversionService,
+        billingLogService = BillingLogService(dal)
+    )
+
+
+    val billingJob = BillingJob(
+        invoiceService = invoiceService,
+        billingService = billingService,
+        batchSize = 100
     )
 
     // This provider provides dates for scheduler
-    val scheduleProvider = ScheduleProvider()
+    val scheduleProvider = MonthlyScheduleProvider()
 
     // start scheduler
-    BillingMonthlyScheduler(
-        invoiceService = invoiceService,
-        billingService = billingService,
-        scheduleProvider = scheduleProvider
+    MonthlyScheduler(
+        billingJob = billingJob,
+        scheduleProvider = scheduleProvider,
+        schedulerName = "Monthly Scheduler"
     ).schedule(1)
 
     // Create REST web service

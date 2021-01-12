@@ -1,13 +1,13 @@
 package io.pleo.antaeus.core.util
 
-import org.junit.jupiter.api.Assertions
+import io.pleo.antaeus.core.scheduled.MonthlyScheduleProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.time.DateTimeException
 import java.time.YearMonth
 
-internal class DateUtilKtTest {
+internal class MonthlyScheduleProviderTest {
     @Test
     fun `given all dates up do 28th in month should return next correct scheduled date`() {
         (2000..2100).forEach {
@@ -147,7 +147,7 @@ internal class DateUtilKtTest {
         val calendarMonth = month - 1
         val expectedCalendarMonth = if (startDay < day) (calendarMonth + 1) % 12 else calendarMonth % 12
 
-        val calculated = getNextMonthlyScheduledDateForStartDay(year, month, day, startDay)
+        val calculated = MonthlyScheduleProvider().getNextMonthlyScheduledDateForStartDay(year, month, day, startDay)
         assertEquals(expectedCalendarYear , calculated.year, "Year: $year, Month: $month, Day: $day, Expected day: $startDay -- Invalid YEAR!")
         assertEquals(expectedCalendarMonth, calculated.month, "Year: $year, Month: $month, Day: $day, Expected day: $startDay -- Invalid MONTH!")
         assertEquals(startDay, calculated.date, "Year: $year, Month: $month, Day: $day, Expected day: $startDay -- Invalid DAY!")
@@ -165,7 +165,7 @@ internal class DateUtilKtTest {
         val expectedCalendarYear = expectedYear % 2000 + 100
         val expectedCalendarMonth = expectedMonth - 1
 
-        val calculated = getNextMonthlyScheduledDateForStartDay(currentYear, currentMonth, currentDay, startDay)
+        val calculated = MonthlyScheduleProvider().getNextMonthlyScheduledDateForStartDay(currentYear, currentMonth, currentDay, startDay)
 
         assertEquals(expectedCalendarYear , calculated.year, "Year: $currentYear, Month: $currentMonth, Day: $currentDay, Expected day: $expectedDay -- Invalid YEAR!")
         assertEquals(expectedCalendarMonth, calculated.month, "Year: $currentYear, Month: $currentMonth, Day: $currentDay, Expected day: $expectedDay -- Invalid MONTH!")

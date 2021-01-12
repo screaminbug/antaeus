@@ -23,7 +23,7 @@ fun ResultRow.toCustomer(): Customer = Customer(
     currency = Currency.valueOf(this[CustomerTable.currency])
 )
 
-fun ResultRow.toBilling(): Billing = Billing(
+fun ResultRow.toBilling(): BillingLog = BillingLog(
     id = this[BillingTable.id],
     customerId = this[BillingTable.customerId],
     invoiceId = this[BillingTable.invoiceId],

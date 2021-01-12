@@ -10,9 +10,7 @@ package io.pleo.antaeus.data
 import io.pleo.antaeus.models.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.Instant
 
 class AntaeusDal(private val db: Database) {
     fun fetchInvoice(id: Int): Invoice? {
@@ -50,7 +48,7 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    fun createBilling(customerId: Int, invoiceId: Int, chargedAmount: Money, billingStatus: BillingStatus): Billing? {
+    fun createBillingLog(customerId: Int, invoiceId: Int, chargedAmount: Money, billingStatus: BillingStatus): BillingLog? {
         val id = transaction(db) {
             BillingTable
                 .insert {
@@ -106,7 +104,7 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    private fun fetchBilling(id: Int): Billing? {
+    private fun fetchBilling(id: Int): BillingLog? {
         return transaction(db) {
             BillingTable
                 .select{ BillingTable.id.eq(id) }

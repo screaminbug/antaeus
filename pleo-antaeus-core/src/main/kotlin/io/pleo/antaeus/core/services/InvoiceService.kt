@@ -18,8 +18,8 @@ class InvoiceService(private val dal: AntaeusDal) {
         return dal.fetchInvoice(id) ?: throw InvoiceNotFoundException(id)
     }
 
-    fun fetchForProcessing(): List<Invoice> {
-        return dal.fetchInvoicesForProcessing()
+    fun fetchForProcessing(batchSize: Int): List<Invoice> {
+        return dal.fetchInvoicesForProcessing(batchSize)
     }
 
     fun markInvoicesAsPaid(invoiceIds: List<Int>) {
