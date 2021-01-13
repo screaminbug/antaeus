@@ -78,7 +78,7 @@ class AntaeusDal(private val db: Database) {
     }
 
 
-    fun updateInvoices(invoiceIds: List<Int>, invoiceStatus: InvoiceStatus) {
+    fun updateInvoices(invoiceIds: Iterable<Int>, invoiceStatus: InvoiceStatus) {
         return transaction(db) {
             InvoiceTable
                 .update({ InvoiceTable.id.inList(invoiceIds) }) {

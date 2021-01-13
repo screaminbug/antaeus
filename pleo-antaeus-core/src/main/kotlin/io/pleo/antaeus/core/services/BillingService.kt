@@ -16,12 +16,12 @@ class BillingService(
      * Process pending invoices
      * @param invoices: invoices that need to be charged
      *
-     * @return list of invoice IDs that have been charged
+     * @return set of invoice IDs that have been charged
      *
      */
-    fun billInvoices(invoices: List<Invoice>): List<Int> {
+    fun billInvoices(invoices: List<Invoice>): Set<Int> {
 
-        val paid = ArrayList<Int>()
+        val paid = HashSet<Int>()
 
         invoices.parallelStream().forEach {
             try {
@@ -35,11 +35,6 @@ class BillingService(
                     billingLogService.recordBilling(it, BillingStatus.DECLINED)
                 }
 
-                val status =
-                    if (isSuccessful) BillingStatus.ACCEPTED
-                    else BillingStatus.DECLINED
-
-                billingLogService.recordBilling(it, status)
             } catch (e: CustomerNotFoundException) {
                 billingLogService.recordBilling(it, BillingStatus.UNKNOWN_USER)
             } catch (e: CurrencyMismatchException) {

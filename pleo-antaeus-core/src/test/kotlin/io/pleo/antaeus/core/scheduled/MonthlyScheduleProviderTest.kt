@@ -1,6 +1,5 @@
-package io.pleo.antaeus.core.util
+package io.pleo.antaeus.core.scheduled
 
-import io.pleo.antaeus.core.scheduled.MonthlyScheduleProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

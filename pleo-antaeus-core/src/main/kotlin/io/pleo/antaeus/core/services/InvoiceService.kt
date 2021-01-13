@@ -22,11 +22,11 @@ class InvoiceService(private val dal: AntaeusDal) {
         return dal.fetchInvoicesForProcessing(batchSize)
     }
 
-    fun markInvoicesAsPaid(invoiceIds: List<Int>) {
+    fun markInvoicesAsPaid(invoiceIds: Iterable<Int>) {
         dal.updateInvoices(invoiceIds, InvoiceStatus.PAID)
     }
 
-    fun markInvoicesAsPending(invoiceIds: List<Int>) {
+    fun markInvoicesAsPending(invoiceIds: Iterable<Int>) {
         dal.updateInvoices(invoiceIds, InvoiceStatus.PENDING)
     }
 }
