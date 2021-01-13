@@ -1,6 +1,7 @@
 package io.pleo.antaeus.core.services
 
 import io.pleo.antaeus.data.AntaeusDal
+import io.pleo.antaeus.models.BillingLog
 import io.pleo.antaeus.models.BillingStatus
 import io.pleo.antaeus.models.Invoice
 
@@ -14,5 +15,9 @@ class BillingLogService (
             chargedAmount = invoice.amount,
             billingStatus = status
         )
+    }
+
+    fun fetchAll(): List<BillingLog> {
+        return dal.fetchBillingLog()
     }
 }

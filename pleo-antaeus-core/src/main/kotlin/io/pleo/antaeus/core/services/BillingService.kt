@@ -25,14 +25,15 @@ class BillingService(
 
         invoices.parallelStream().forEach {
             try {
-                val invoiceWithConvertedCurrency = conversionService.checkAndConvert(it)
-                val isSuccessful = paymentProvider.charge(invoiceWithConvertedCurrency)
 
-                if (isSuccessful) {
-                    billingLogService.recordBilling(it, BillingStatus.ACCEPTED)
-                    paid.add(it.id)
-                } else {
-                    billingLogService.recordBilling(it, BillingStatus.DECLINED)
+                val invoiceWithConvertedCurrency = conversionService.checkAndConvert(it)
+
+                when (paymentProvider.charge(invoiceWithConvertedCurrency)) {
+                    true -> {
+                        billingLogService.recordBilling(it, BillingStatus.ACCEPTED)
+                        paid.add(it.id)
+                    }
+                    false -> billingLogService.recordBilling(it, BillingStatus.DECLINED)
                 }
 
             } catch (e: CustomerNotFoundException) {

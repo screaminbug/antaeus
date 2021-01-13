@@ -24,12 +24,13 @@ fun ResultRow.toCustomer(): Customer = Customer(
 )
 
 fun ResultRow.toBilling(): BillingLog = BillingLog(
-    id = this[BillingTable.id],
-    customerId = this[BillingTable.customerId],
-    invoiceId = this[BillingTable.invoiceId],
-    billingStatus = BillingStatus.valueOf(this[BillingTable.billingStatus]),
+    id = this[BillingLogTable.id],
+    customerId = this[BillingLogTable.customerId],
+    invoiceId = this[BillingLogTable.invoiceId],
+    billingStatus = BillingStatus.valueOf(this[BillingLogTable.billingStatus]),
     chargedAmount = Money(
-        value = this[BillingTable.amount],
-        currency = Currency.valueOf(this[BillingTable.currency])
-    )
+        value = this[BillingLogTable.amount],
+        currency = Currency.valueOf(this[BillingLogTable.currency])
+    ),
+    billingDate = this[BillingLogTable.chargeAttempTimestamp]
 )

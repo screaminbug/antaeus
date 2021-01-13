@@ -14,6 +14,7 @@ import io.pleo.antaeus.core.scheduled.MonthlyScheduler
 import io.pleo.antaeus.core.scheduled.MonthlyScheduleProvider
 import io.pleo.antaeus.core.services.*
 import io.pleo.antaeus.data.AntaeusDal
+import io.pleo.antaeus.data.BillingLogTable
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
 import io.pleo.antaeus.rest.AntaeusRest
@@ -29,7 +30,7 @@ import java.sql.Connection
 
 fun main() {
     // The tables to create in the database.
-    val tables = arrayOf(InvoiceTable, CustomerTable)
+    val tables = arrayOf(InvoiceTable, CustomerTable, BillingLogTable)
 
     val dbFile: File = File.createTempFile("antaeus-db", ".sqlite")
     // Connect to the database and create the needed tables. Drop any existing data.
@@ -63,13 +64,14 @@ fun main() {
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
     val currencyConversionService = CurrencyConversionService(customerService, currencyProvider)
+    val billingLogService = BillingLogService(dal = dal)
 
 
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(
         paymentProvider = paymentProvider,
         conversionService = currencyConversionService,
-        billingLogService = BillingLogService(dal)
+        billingLogService = billingLogService
     )
 
 
@@ -93,7 +95,8 @@ fun main() {
     AntaeusRest(
         invoiceService = invoiceService,
         customerService = customerService,
-        billingJob = billingJob
+        billingJob = billingJob,
+        billingLogService = billingLogService
     ).run()
 
 

@@ -21,7 +21,7 @@ object CustomerTable : Table() {
     val currency = varchar("currency", 3)
 }
 
-object BillingTable : Table() {
+object BillingLogTable : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val customerId = reference("customer_id", CustomerTable.id)
     val invoiceId = reference("invoice_id", InvoiceTable.id)

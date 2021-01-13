@@ -32,10 +32,10 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    fun fetchInvoicesForProcessing(limit: Int? = null): List<Invoice> {
+    fun fetchInvoicesForProcessing(): List<Invoice> {
         return transaction(db) {
 
-            InvoiceTable.update({InvoiceTable.status.eq(InvoiceStatus.PENDING.name)}, limit) {
+            InvoiceTable.update({InvoiceTable.status.eq(InvoiceStatus.PENDING.name)}) {
                 it[this.status] = InvoiceStatus.PROCESSING.toString()
             }
 
@@ -50,14 +50,14 @@ class AntaeusDal(private val db: Database) {
 
     fun createBillingLog(customerId: Int, invoiceId: Int, chargedAmount: Money, billingStatus: BillingStatus): BillingLog? {
         val id = transaction(db) {
-            BillingTable
+            BillingLogTable
                 .insert {
                     it[this.customerId] = customerId
                     it[this.invoiceId] = invoiceId
                     it[this.currency] = chargedAmount.currency.name
                     it[this.amount] = chargedAmount.value
                     it[this.billingStatus] = billingStatus.name
-                } get BillingTable.id
+                } get BillingLogTable.id
         }
         return fetchBilling(id)
     }
@@ -106,8 +106,8 @@ class AntaeusDal(private val db: Database) {
 
     private fun fetchBilling(id: Int): BillingLog? {
         return transaction(db) {
-            BillingTable
-                .select{ BillingTable.id.eq(id) }
+            BillingLogTable
+                .select{ BillingLogTable.id.eq(id) }
                 .firstOrNull()
                 ?.toBilling()
         }
@@ -122,5 +122,13 @@ class AntaeusDal(private val db: Database) {
         }
 
         return fetchCustomer(id)
+    }
+
+    fun fetchBillingLog(): List<BillingLog> {
+        return transaction(db) {
+            BillingLogTable
+                .selectAll()
+                .map { it.toBilling() }
+        }
     }
 }

@@ -9,8 +9,10 @@ import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.pleo.antaeus.core.exceptions.EntityNotFoundException
 import io.pleo.antaeus.core.job.BillingJob
+import io.pleo.antaeus.core.services.BillingLogService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.models.BillingLog
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -19,7 +21,8 @@ private val thisFile: () -> Unit = {}
 class AntaeusRest(
     private val invoiceService: InvoiceService,
     private val customerService: CustomerService,
-    private val billingJob: BillingJob
+    private val billingJob: BillingJob,
+    private val billingLogService: BillingLogService
 ) : Runnable {
 
     override fun run() {
@@ -85,6 +88,12 @@ class AntaeusRest(
                         // URL: /rest/v1/triggerbilling
                         get {
                             billingJob.run()
+                        }
+                    }
+
+                    path("billing_log") {
+                        get {
+                            it.json(billingLogService.fetchAll().map { log -> log.toBillingLogDto() } )
                         }
                     }
                 }
