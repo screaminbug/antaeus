@@ -31,7 +31,7 @@ only the PENDING statuses will be considered for sending to the billing service.
 A care needs to be taken so that charged invoices are marked as paid. If something goes wrong in the billing service
 after the invoice has been successfully charged, there is a potential for invoices to get stuck in PROCESSING status.
 Possible mitigations
-1. If Billing record was succesfully persisted
+1. Billing service should handle all exceptions and log the results for later reference
 
 ## Classes
 
