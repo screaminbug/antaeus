@@ -6,12 +6,11 @@ import io.pleo.antaeus.models.Invoice
 
 class BillingJob(
     private val invoiceService: InvoiceService,
-    private val billingService: BillingService,
-    private val batchSize: Int
+    private val billingService: BillingService
 ): Runnable {
 
     override fun run() {
-        val unpaid = invoiceService.fetchForProcessing(batchSize)
+        val unpaid = invoiceService.fetchForProcessing()
         val paidIds = billingService.billInvoices(unpaid)
         invoiceService.markInvoicesAsPaid(paidIds)
         invoiceService.markInvoicesAsPending(

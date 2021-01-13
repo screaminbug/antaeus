@@ -74,11 +74,10 @@ fun main() {
         billingLogService = billingLogService
     )
 
-
+    // Create a job which will provide invoices for the billing service
     val billingJob = BillingJob(
         invoiceService = invoiceService,
-        billingService = billingService,
-        batchSize = 100
+        billingService = billingService
     )
 
     // This provider provides dates for scheduler
